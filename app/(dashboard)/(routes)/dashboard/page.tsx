@@ -1,16 +1,12 @@
-"use client";
+import { ArrowRight } from "lucide-react"
 
-import { ArrowRight } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { Card } from "@/components/ui/card"
+import { cn } from "@/lib/utils"
 
-import { Card } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
-
-import { tools } from "@/constants";
+import { tools } from "@/constants"
+import Link from "next/link"
 
 export default function HomePage() {
-  const router = useRouter();
-
   return (
     <div>
       <div className="mb-8 space-y-4">
@@ -24,21 +20,19 @@ export default function HomePage() {
       </div>
       <div className="px-4 md:px-20 lg:px-32 space-y-4">
         {tools.map((tool) => (
-          <Card
-            onClick={() => router.push(tool.href)}
-            key={tool.href}
-            className="p-4 border-black/5 flex items-center justify-between hover:shadow-md transition cursor-pointer"
-          >
-            <div className="flex items-center gap-x-4">
-              <div className={cn("p-2 w-fit rounded-md", tool.bgColor)}>
-                <tool.icon className={cn("w-8 h-8", tool.color)} />
+          <Link href={tool.href} key={tool.href}>
+            <Card className="p-4 border-black/5 flex items-center justify-between hover:shadow-md transition cursor-pointer">
+              <div className="flex items-center gap-x-4">
+                <div className={cn("p-2 w-fit rounded-md", tool.bgColor)}>
+                  <tool.icon className={cn("w-8 h-8", tool.color)} />
+                </div>
+                <div className="font-semibold">{tool.label}</div>
               </div>
-              <div className="font-semibold">{tool.label}</div>
-            </div>
-            <ArrowRight className="w-5 h-5" />
-          </Card>
+              <ArrowRight className="w-5 h-5" />
+            </Card>
+          </Link>
         ))}
       </div>
     </div>
-  );
+  )
 }

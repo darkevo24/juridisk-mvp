@@ -1,23 +1,22 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import { ClerkProvider } from "@clerk/nextjs";
+import type { Metadata } from "next"
+import { Inter } from "next/font/google"
+import { ClerkProvider } from "@clerk/nextjs"
+import { ToasterProvider } from "@/components/toaster-provider"
+import { ModalProvider } from "@/components/modal-provider"
 
-import { ToasterProvider } from "@/components/toaster-provider";
-import { ModalProvider } from "@/components/modal-provider";
+import "./globals.css"
 
-import "./globals.css";
-
-const font = Inter({ subsets: ["latin"] });
+const font = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
   title: "JuridiskAI",
   description: "AI-powered chat support for online dating",
-};
+}
 
 export default async function RootLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode
 }) {
   return (
     <ClerkProvider>
@@ -29,5 +28,5 @@ export default async function RootLayout({
         </body>
       </html>
     </ClerkProvider>
-  );
+  )
 }

@@ -1,4 +1,4 @@
-import { Search, SearchCheck, MessagesSquare, FileSearch } from "lucide-react";
+import { Search } from "lucide-react";
 
 export const MAX_FREE_COUNTS = 3;
 
