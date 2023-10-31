@@ -3,7 +3,7 @@
 import Link from "next/link"
 import Image from "next/image"
 import { Montserrat } from "next/font/google"
-import { LayoutDashboard, Search, Settings } from "lucide-react"
+import { LayoutDashboard, Search, FileStack, Settings } from "lucide-react"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { FreeCounter } from "@/components/free-counter"
@@ -22,6 +22,12 @@ const routes = [
     icon: Search,
     href: "/search?categories%5BhierarchicalCategories.lvl0%5D%5B0%5D=Rettsavgjørelser",
     color: "text-red-500",
+  },
+  {
+    label: "Interntsøk",
+    icon: FileStack,
+    href: "/internal",
+    color: "text-yellow-300",
   },
   {
     label: "Innstillinger",

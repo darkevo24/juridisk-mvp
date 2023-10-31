@@ -18,10 +18,10 @@ export default function HomePage() {
           av kunstig intelligens.
         </p>
       </div>
-      <div className="px-4 md:px-20 lg:px-32 space-y-4">
+      <div className="px-4 md:px-20 lg:px-32 flex flex-col gap-4">
         {tools.map((tool) => (
           <Link href={tool.href} key={tool.href}>
-            <Card className="p-4 border-black/5 flex items-center justify-between hover:shadow-md transition cursor-pointer">
+            <Card className="p-4 border-black/10 flex items-center justify-between hover:shadow-md transition cursor-pointer">
               <div className="flex items-center gap-x-4">
                 <div className={cn("p-2 w-fit rounded-md", tool.bgColor)}>
                   <tool.icon className={cn("w-8 h-8", tool.color)} />
