@@ -1,21 +1,14 @@
-"use client";
+"use client"
 
-import Link from "next/link";
-import Image from "next/image";
-import { Montserrat } from "next/font/google";
-import {
-  LayoutDashboard,
-  Search,
-  SearchCheck,
-  MessagesSquare,
-  FileSearch,
-  Settings,
-} from "lucide-react";
-import { usePathname } from "next/navigation";
-import { cn } from "@/lib/utils";
-import { FreeCounter } from "@/components/free-counter";
+import Link from "next/link"
+import Image from "next/image"
+import { Montserrat } from "next/font/google"
+import { LayoutDashboard, Search, Settings } from "lucide-react"
+import { usePathname } from "next/navigation"
+import { cn } from "@/lib/utils"
+import { FreeCounter } from "@/components/free-counter"
 
-const poppins = Montserrat({ weight: "600", subsets: ["latin"] });
+const poppins = Montserrat({ weight: "600", subsets: ["latin"] })
 
 const routes = [
   {
@@ -27,7 +20,7 @@ const routes = [
   {
     label: "Rettskildesøk",
     icon: Search,
-    href: "/search",
+    href: "/search?categories%5BhierarchicalCategories.lvl0%5D%5B0%5D=Rettsavgjørelser",
     color: "text-red-500",
   },
   {
@@ -35,16 +28,16 @@ const routes = [
     icon: Settings,
     href: "/settings",
   },
-];
+]
 
 export const Sidebar = ({
   apiLimitCount = 0,
   isPro = false,
 }: {
-  apiLimitCount: number;
-  isPro: boolean;
+  apiLimitCount: number
+  isPro: boolean
 }) => {
-  const pathname = usePathname();
+  const pathname = usePathname()
 
   return (
     <div className="space-y-4 py-4 flex flex-col h-full bg-[#111827] text-white">
@@ -79,5 +72,5 @@ export const Sidebar = ({
       </div>
       <FreeCounter apiLimitCount={apiLimitCount} isPro={isPro} />
     </div>
-  );
-};
+  )
+}
