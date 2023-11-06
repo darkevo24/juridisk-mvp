@@ -10,6 +10,9 @@
     "postinstall": "prisma generate"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.441.0",
+    "@aws-sdk/credential-providers": "^3.441.0",
+    "@aws-sdk/s3-request-presigner": "^3.441.0",
     "@clerk/nextjs": "^4.26.1",
     "@hookform/resolvers": "^3.3.2",
     "@meilisearch/instant-meilisearch": "^0.13.6",
