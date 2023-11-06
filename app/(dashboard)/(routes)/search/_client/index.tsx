@@ -4,12 +4,12 @@ import {
   SearchBox,
   Configure,
   Pagination,
-  ClearRefinements,
   HierarchicalMenu,
   Breadcrumb,
   Highlight,
   useHits,
   useInstantSearch,
+  useClearRefinements,
 } from "react-instantsearch"
 import { X } from "lucide-react"
 import { InstantSearchNext } from "react-instantsearch-nextjs"
@@ -30,8 +30,8 @@ interface HitType {
 const indexName = "all_data"
 
 export default function ClientSearch() {
-  const [date, setDate] = useState<Date[]>([])
   const [activeHit, setActiveHit] = useState<HitType | null>(null)
+  const [date, setDate] = useState<Date[] | undefined[]>([])
 
   return (
     <InstantSearchNext
@@ -80,16 +80,7 @@ export default function ClientSearch() {
         />
         <div className="flex flex-col lg:flex-row gap-8 h-full">
           <div className="flex flex-col mt-4 space-x-4">
-            <ClearRefinements
-              translations={{
-                resetButtonText: "Fjern alle filtere",
-              }}
-              classNames={{
-                root: "flex justify-end items-center",
-                button:
-                  "!inline-flex !items-center !justify-center !rounded-md !text-sm !font-medium !ring-offset-background !transition-colors !focus-visible:outline-none !focus-visible:ring-2 !focus-visible:ring-ring !focus-visible:ring-offset-2 !disabled:pointer-events-none !disabled:opacity-50 !bg-primary !text-primary-foreground !hover:bg-primary/90 !h-10 !px-4 !py-2",
-              }}
-            />
+            <ClearFilters dateFilter={date} setDateFilter={setDate} />
             <h3 className="font-semibold pt-4">Kategori:</h3>
             <HierarchicalMenu
               attributes={[
@@ -100,7 +91,7 @@ export default function ClientSearch() {
             />
             <h3 className="font-semibold pt-4">Dato:</h3>
             <MonthRangePicker
-              value={date}
+              value={date as any}
               onChange={(sdate) => {
                 if (sdate[1]) {
                   const newD = new Date(
@@ -196,6 +187,31 @@ export default function ClientSearch() {
         </div>
       </div>
     </InstantSearchNext>
+  )
+}
+
+function ClearFilters({
+  dateFilter,
+  setDateFilter,
+}: {
+  dateFilter: Date[] | undefined[]
+  setDateFilter: (dates: Date[] | undefined[]) => void
+}) {
+  const { canRefine, refine } = useClearRefinements()
+
+  return (
+    <Button
+      className="w-fit"
+      disabled={!canRefine && !dateFilter[0]}
+      onClick={() => {
+        if (canRefine) {
+          refine()
+        }
+        if (dateFilter[0]) setDateFilter([undefined, undefined])
+      }}
+    >
+      Fjern alle filtere
+    </Button>
   )
 }
 

@@ -35,21 +35,23 @@ const InternalClient = ({ userEmail }: { userEmail: string }) => {
     "c4pOKpOga5O9OVofl_dvpr0M3OM3-U-ttHEFQhEsY8A"
   )
 
-  async function checkIndex() {
-    try {
-      const response = await fetch(
-        "http://localhost:8000/check_meilisearch_index_exists",
-        { method: "GET" }
-      )
-      const data = await response.json()
-      if (data && data.status === "success") {
-        setIndexExists(true)
+  useEffect(() => {
+    async function checkIndex() {
+      try {
+        const response = await fetch(
+          "http://localhost:8000/check_meilisearch_index_exists",
+          { method: "GET" }
+        )
+        const data = await response.json()
+        if (data && data.status === "success") {
+          setIndexExists(true)
+        }
+      } catch (error) {
+        console.error("Error checking MeiliSearch index:", error)
       }
-    } catch (error) {
-      console.error("Error checking MeiliSearch index:", error)
     }
-  }
-  checkIndex()
+    checkIndex()
+  }, [])
 
   const handleFileSelect = async (file: File) => {
     const formData = new FormData()
