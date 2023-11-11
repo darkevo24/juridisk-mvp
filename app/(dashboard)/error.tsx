@@ -1,3 +1,4 @@
+"use client"
 import { Empty } from "@/components/ui/empty"
 
 const Error = () => {

@@ -10,16 +10,15 @@ import {
 } from "react-instantsearch"
 import { InstantSearchNext } from "react-instantsearch-nextjs"
 import { instantMeiliSearch } from "@meilisearch/instant-meilisearch"
-import { createDoc, deleteDoc } from "../_actions"
-import { FileUpload } from "@/components/file-upload"
 import { Button } from "@/components/ui/button"
-import { File, Trash, X } from "lucide-react"
+import { File, X } from "lucide-react"
 import {
   Dialog,
   DialogContent,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import Link from "next/link"
 
 interface HitType {
   [key: string]: any
@@ -28,11 +27,9 @@ interface HitType {
 const InternalClient = ({ userEmail }: { userEmail: string }) => {
   const [indexExists, setIndexExists] = useState<boolean>(false)
   const [activeHit, setActiveHit] = useState<HitType | null>(null)
-  const [isPending, startTransition] = useTransition()
-
   const searchClient = instantMeiliSearch(
     "http://localhost:7700",
-    "c4pOKpOga5O9OVofl_dvpr0M3OM3-U-ttHEFQhEsY8A"
+    "KfL0tPu0lkYgFXs8mphBZWu6_-n9dyAJ7nyKKgo5FYU"
   )
 
   useEffect(() => {
@@ -53,19 +50,9 @@ const InternalClient = ({ userEmail }: { userEmail: string }) => {
     checkIndex()
   }, [])
 
-  const handleFileSelect = async (file: File) => {
-    const formData = new FormData()
-    formData.append("file", file)
-    formData.set("email", userEmail)
-    startTransition(async () => {
-      await createDoc(formData)
-    })
-  }
-
   return (
     <div className="flex flex-row w-full gap-8 h-full">
       <div className="flex-1 flex flex-col">
-        <FileUpload onFileSelect={handleFileSelect} />
         {indexExists && (
           <InstantSearchNext
             indexName="documents"
@@ -79,12 +66,8 @@ const InternalClient = ({ userEmail }: { userEmail: string }) => {
               attributesToSnippet={["content:50"]}
               filters={`author = '${userEmail}'`}
             />
-            <div className="flex flex-col mt-4 flex-1 overflow-auto px-4">
-              {isPending ? (
-                <div className="w-12 h-12 mx-auto mt-12 border-4 border-gray-200 rounded-full border-t-current animate-spin"></div>
-              ) : (
-                <Hits setActiveHit={setActiveHit} />
-              )}
+            <div className="flex flex-col mt-4 flex-1 overflow-auto pl-4">
+              <Hits setActiveHit={setActiveHit} />
             </div>
           </InstantSearchNext>
         )}
@@ -110,7 +93,7 @@ function Hits({ setActiveHit }: { setActiveHit: (hit: HitType) => void }) {
   })
   return (
     <>
-      {hits.length !== 0 && (
+      {hits.length !== 0 ? (
         <>
           <SearchBox
             placeholder="Skriv søkeord her..."
@@ -139,6 +122,14 @@ function Hits({ setActiveHit }: { setActiveHit: (hit: HitType) => void }) {
             className="navigation-container fixed bottom-0 p-8 left-1/2 mx-auto w-fit"
           />
         </>
+      ) : (
+        <p className="text-lg">
+          Ingen opplastinger ennå. Gå til{" "}
+          <Button className="px-0 text-base" asChild variant={"link"}>
+            <Link href={"/files"}>filbehandling</Link>
+          </Button>
+          , last opp et dokument for å sette i gang med internsøk.
+        </p>
       )}
     </>
   )
@@ -181,27 +172,6 @@ function SidePanel({
             </div>
           </DialogContent>
         </Dialog>
-        <Button
-          variant={deletePending ? "outline" : "destructive"}
-          onClick={() =>
-            startDeleteTransition(async () => {
-              await deleteDoc(activeHit.id, userEmail, activeHit.title)
-              setActiveHit(null)
-            })
-          }
-        >
-          {deletePending ? (
-            <>
-              <div className="w-6 h-6 border-2 border-gray-200 rounded-full border-t-current animate-spin"></div>
-              <span className="ml-2">Deleting...</span>
-            </>
-          ) : (
-            <>
-              <Trash className="w-5 h-5" />
-              <span className="ml-2">Delete this Document</span>
-            </>
-          )}
-        </Button>
         <Button
           onClick={() => setActiveHit(null)}
           variant={"outline"}

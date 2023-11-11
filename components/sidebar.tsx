@@ -3,7 +3,13 @@
 import Link from "next/link"
 import Image from "next/image"
 import { Montserrat } from "next/font/google"
-import { LayoutDashboard, Search, FileStack, Settings } from "lucide-react"
+import {
+  LayoutDashboard,
+  Search,
+  FileStack,
+  Settings,
+  FolderClosed,
+} from "lucide-react"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { FreeCounter } from "@/components/free-counter"
@@ -16,23 +22,34 @@ const routes = [
     icon: LayoutDashboard,
     href: "/dashboard",
     color: "text-sky-500",
+    activeMethod: "route",
   },
   {
     label: "Rettskildesøk",
     icon: Search,
     href: "/search?categories%5BhierarchicalCategories.lvl0%5D%5B0%5D=Rettsavgjørelser",
     color: "text-red-500",
+    activeMethod: "route",
   },
   {
     label: "Interntsøk",
     icon: FileStack,
     href: "/internal",
     color: "text-yellow-300",
+    activeMethod: "route",
+  },
+  {
+    label: "Filbehandling",
+    icon: FolderClosed,
+    href: "/files",
+    color: "text-fuchsia-500",
+    activeMethod: "pathname",
   },
   {
     label: "Innstillinger",
     icon: Settings,
     href: "/settings",
+    activeMethod: "route",
   },
 ]
 
@@ -63,7 +80,11 @@ export const Sidebar = ({
               href={route.href}
               className={cn(
                 "text-sm group flex p-3 w-full justify-start font-medium cursor-pointer hover:text-white hover:bg-white/10 rounded-lg transition",
-                route.href.startsWith(pathname)
+                route.activeMethod === "route"
+                  ? route.href.startsWith(pathname)
+                    ? "text-white bg-white/10"
+                    : "text-zinc-400"
+                  : pathname.startsWith(route.href)
                   ? "text-white bg-white/10"
                   : "text-zinc-400"
               )}
