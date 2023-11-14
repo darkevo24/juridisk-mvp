@@ -4,7 +4,7 @@ import client from "@/lib/s3client"
 import { extractRightOfSlash } from "@/lib/utils"
 import { revalidatePath } from "next/cache"
 
-const BUCKET_NAME = "juridiskai-files"
+const BUCKET_NAME = "lovagent-files"
 
 export type S3Response = Omit<_Object, "StorageClass"> & {
   StorageClass?: string

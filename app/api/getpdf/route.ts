@@ -7,7 +7,7 @@ export async function GET(request: NextRequest) {
   const author = searchParams.get("author")
   const title = searchParams.get("title")
   const command = new GetObjectCommand({
-    Bucket: "juridiskai-files",
+    Bucket: "lovagent-files",
     Key: `${author}/${title}`,
   })
   const response = await client.send(command)

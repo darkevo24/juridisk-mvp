@@ -43,7 +43,7 @@ export async function GET() {
           price_data: {
             currency: "NOK",
             product_data: {
-              name: "JuridiskAI Premium",
+              name: "Lov Agent AI Premium",
               description: "Fri Tilgang til Premium Tjenester"
             },
             unit_amount: 49900,
