@@ -1,4 +1,4 @@
-# Juridisk AI
+# LovAgent AI
 
 ## Installation
 

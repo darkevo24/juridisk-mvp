@@ -1,17 +1,17 @@
-import { ArrowRight } from "lucide-react"
+import { ArrowRight } from "lucide-react";
 
-import { Card } from "@/components/ui/card"
-import { cn } from "@/lib/utils"
+import { Card } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 
-import { tools } from "@/constants"
-import Link from "next/link"
+import { tools } from "@/constants";
+import Link from "next/link";
 
 export default function HomePage() {
   return (
     <div>
       <div className="mb-8 space-y-4">
         <h2 className="text-2xl md:text-4xl font-bold text-center">
-          Juridisk AI
+          LovAgent AI
         </h2>
         <p className="text-muted-foreground font-light text-sm md:text-lg text-center">
           Din pålitelige partner for rettskildesøk og juridisk analyse ved hjelp
@@ -34,5 +34,5 @@ export default function HomePage() {
         ))}
       </div>
     </div>
-  )
+  );
 }
