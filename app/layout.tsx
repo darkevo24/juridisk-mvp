@@ -9,7 +9,7 @@ import "./globals.css";
 const font = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Lov Agent AI",
+  title: "LovAgent AI",
   description: "AI-powered chat support for online dating",
 };
 
