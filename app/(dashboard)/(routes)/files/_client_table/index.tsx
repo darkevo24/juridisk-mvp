@@ -2,6 +2,7 @@
 
 import {
   ColumnDef,
+  Row,
   flexRender,
   getCoreRowModel,
   useReactTable,
@@ -32,6 +33,11 @@ import {
 import { usePathname } from "next/navigation"
 import { useUser } from "@clerk/nextjs"
 
+/**
+ * Using tanstack/table
+ * @see {@link https://tanstack.com/table}
+ */
+
 export const columns: ColumnDef<S3Response>[] = [
   {
     id: "select",
@@ -55,41 +61,7 @@ export const columns: ColumnDef<S3Response>[] = [
   {
     accessorKey: "Key",
     header: "Name",
-    cell: ({ row }) => {
-      const { user } = useUser()
-      const type: string = row.getValue("StorageClass")
-      const title: string = row.getValue("Key")
-      const { OriginalKey } = row.original
-      return (
-        <div className="flex gap-3 items-center">
-          <div className="p-2 w-fit rounded-md bg-blue-500/10">
-            {type === "DIRECTORY" ? (
-              <Folder className="w-5 h-5 text-blue-500" />
-            ) : (
-              <FileType2 className="w-5 h-5 text-blue-500" />
-            )}
-          </div>
-          {type === "DIRECTORY" ? (
-            <Button
-              className="font-bold text-neutral-700 px-0"
-              asChild
-              variant={"link"}
-            >
-              <Link
-                href={OriginalKey!.replace(
-                  user?.emailAddresses[0].emailAddress ?? "",
-                  "/files"
-                )}
-              >
-                {title}
-              </Link>
-            </Button>
-          ) : (
-            <span className="font-bold text-neutral-700">{title}</span>
-          )}
-        </div>
-      )
-    },
+    cell: ({ row }) => <NameCell row={row} />,
   },
   {
     accessorKey: "Size",
@@ -125,42 +97,7 @@ export const columns: ColumnDef<S3Response>[] = [
   },
   {
     id: "actions",
-    cell: ({ row }) => {
-      const { OriginalKey, StorageClass } = row.original
-      const pathname = usePathname()
-      const [deletePending, startDeleteTransition] = useTransition()
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              {deletePending ? (
-                <div className="w-6 h-6 border-[3px] border-gray-200 rounded-full border-t-current animate-spin"></div>
-              ) : (
-                <MoreVertical className="h-4 w-4" />
-              )}
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem>Rename</DropdownMenuItem>
-            <DropdownMenuItem>Move</DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onClick={() =>
-                startDeleteTransition(async () => {
-                  if (StorageClass === "DIRECTORY")
-                    await deleteFolder(OriginalKey!, pathname)
-                  else await deleteObject(OriginalKey!, pathname)
-                })
-              }
-              className="text-red-700 hover:!text-red-700 hover:!bg-red-700/10"
-            >
-              Delete
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      )
-    },
+    cell: ({ row }) => <ActionsCell row={row} />,
   },
 ]
 
@@ -258,5 +195,78 @@ export default function FilesDataTable({ data }: { data: S3Response[] }) {
         </Table>
       </div>
     </>
+  )
+}
+
+function NameCell({ row }: { row: Row<S3Response> }) {
+  const { user } = useUser()
+  const type: string = row.getValue("StorageClass")
+  const title: string = row.getValue("Key")
+  const { OriginalKey } = row.original
+  return (
+    <div className="flex gap-3 items-center">
+      <div className="p-2 w-fit rounded-md bg-blue-500/10">
+        {type === "DIRECTORY" ? (
+          <Folder className="w-5 h-5 text-blue-500" />
+        ) : (
+          <FileType2 className="w-5 h-5 text-blue-500" />
+        )}
+      </div>
+      {type === "DIRECTORY" ? (
+        <Button
+          className="font-bold text-neutral-700 px-0"
+          asChild
+          variant={"link"}
+        >
+          <Link
+            href={OriginalKey!.replace(
+              user?.emailAddresses[0].emailAddress ?? "",
+              "/files"
+            )}
+          >
+            {title}
+          </Link>
+        </Button>
+      ) : (
+        <span className="font-bold text-neutral-700">{title}</span>
+      )}
+    </div>
+  )
+}
+
+function ActionsCell({ row }: { row: Row<S3Response> }) {
+  const { OriginalKey, StorageClass } = row.original
+  const pathname = usePathname()
+  const [deletePending, startDeleteTransition] = useTransition()
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" className="h-8 w-8 p-0">
+          <span className="sr-only">Open menu</span>
+          {deletePending ? (
+            <div className="w-6 h-6 border-[3px] border-gray-200 rounded-full border-t-current animate-spin"></div>
+          ) : (
+            <MoreVertical className="h-4 w-4" />
+          )}
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuItem>Rename</DropdownMenuItem>
+        <DropdownMenuItem>Move</DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem
+          onClick={() =>
+            startDeleteTransition(async () => {
+              if (StorageClass === "DIRECTORY")
+                await deleteFolder(OriginalKey!, pathname)
+              else await deleteObject(OriginalKey!, pathname)
+            })
+          }
+          className="text-red-700 hover:!text-red-700 hover:!bg-red-700/10"
+        >
+          Delete
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   )
 }

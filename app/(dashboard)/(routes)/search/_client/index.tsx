@@ -16,7 +16,13 @@ import { InstantSearchNext } from "react-instantsearch-nextjs"
 import { useState } from "react"
 import { MonthRangePicker } from "@semcore/ui/date-picker"
 import { Button } from "@/components/ui/button"
-import { history } from "instantsearch.js/es/lib/routers"
+// import { history } from "instantsearch.js/es/lib/routers"
+
+/**
+ * Using Meilisearch and Algolia InstantSearch components.
+ * @see {@link https://www.meilisearch.com/docs/learn/what_is_meilisearch/overview}
+ * @see {@link https://www.algolia.com/doc/guides/building-search-ui/what-is-instantsearch/react}
+ */
 
 const searchClient = instantMeiliSearch(
   process.env.NEXT_PUBLIC_MEILISEARCH_URL || "",
@@ -27,7 +33,7 @@ interface HitType {
   [key: string]: any
 }
 
-const indexName = "all_data"
+// const indexName = "all_data"
 
 export default function ClientSearch() {
   const [activeHit, setActiveHit] = useState<HitType | null>(null)
@@ -35,31 +41,31 @@ export default function ClientSearch() {
 
   return (
     <InstantSearchNext
-      routing={{
-        // @ts-ignore
-        router: history(),
-        stateMapping: {
-          // @ts-ignore
-          stateToRoute(uiState) {
-            const indexUiState = uiState[indexName]
-            return {
-              q: indexUiState.query,
-              categories: indexUiState.hierarchicalMenu,
-              page: indexUiState.page,
-            }
-          },
-          // @ts-ignore
-          routeToState(routeState) {
-            return {
-              [indexName]: {
-                query: routeState.q,
-                hierarchicalMenu: routeState.categories,
-                page: routeState.page,
-              },
-            }
-          },
-        },
-      }}
+      // routing={{
+      //   // @ts-ignore
+      //   router: history(),
+      //   stateMapping: {
+      //     // @ts-ignore
+      //     stateToRoute(uiState) {
+      //       const indexUiState = uiState[indexName]
+      //       return {
+      //         q: indexUiState.query,
+      //         categories: indexUiState.hierarchicalMenu,
+      //         page: indexUiState.page,
+      //       }
+      //     },
+      //     // @ts-ignore
+      //     routeToState(routeState) {
+      //       return {
+      //         [indexName]: {
+      //           query: routeState.q,
+      //           hierarchicalMenu: routeState.categories,
+      //           page: routeState.page,
+      //         },
+      //       }
+      //     },
+      //   },
+      // }}
       indexName="all_data"
       searchClient={searchClient}
       future={{

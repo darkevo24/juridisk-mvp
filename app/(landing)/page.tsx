@@ -3,6 +3,8 @@ import { LandingHero } from "@/components/landing-hero"
 import { LandingContent } from "@/components/landing-content"
 import { LandingFooter } from "@/components/landing-footer"
 
+export const runtime = "edge"
+
 const LandingPage = () => {
   return (
     <div className="h-full ">

@@ -27,7 +27,7 @@ const routes = [
   {
     label: "Rettskildesøk",
     icon: Search,
-    href: "/search?categories%5BhierarchicalCategories.lvl0%5D%5B0%5D=Rettsavgjørelser",
+    href: "/search",
     color: "text-red-500",
     activeMethod: "route",
   },

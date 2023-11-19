@@ -42,6 +42,7 @@ const UploadButton = () => {
             for (const file of e.target.files) {
               formData.append("files", file)
             }
+            // formData.set("file", e.target.files[0])
             formData.set("email", user?.emailAddresses[0].emailAddress ?? "")
             formData.set(
               "file_path",

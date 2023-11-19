@@ -28,7 +28,7 @@ export default function CreateFolderButton() {
     await createFolder(basePath + "/" + folderName, pathname)
   }
 
-  return (
+  return pathname === "/files" ? (
     <Dialog>
       <DialogTrigger asChild>
         <button className="bg-transparent font-medium text-neutral-900 hover:bg-neutral-100 rounded-none px-10 py-5 flex items-center">
@@ -47,5 +47,5 @@ export default function CreateFolderButton() {
         </form>
       </DialogContent>
     </Dialog>
-  )
+  ) : null
 }
