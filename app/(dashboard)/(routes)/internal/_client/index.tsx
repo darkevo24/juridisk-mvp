@@ -1,5 +1,5 @@
 "use client"
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import {
   SearchBox,
   Highlight,
@@ -25,26 +25,6 @@ const searchClient = instantMeiliSearch(
 )
 
 const InternalClient = ({ userEmail }: { userEmail: string }) => {
-  const [indexExists, setIndexExists] = useState<boolean>(false)
-
-  useEffect(() => {
-    async function checkIndex() {
-      try {
-        const response = await fetch(
-          "http://localhost:8000/check_meilisearch_index_exists",
-          { method: "GET" }
-        )
-        const data = await response.json()
-        if (data && data.status === "success") {
-          setIndexExists(true)
-        }
-      } catch (error) {
-        console.error("Error checking MeiliSearch index:", error)
-      }
-    }
-    checkIndex()
-  }, [])
-
   return (
     <div className="flex flex-row w-full gap-8 h-full">
       <div className="flex-1 flex flex-col">

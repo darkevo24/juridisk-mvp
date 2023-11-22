@@ -15,9 +15,16 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { FileType2, Folder, MoreVertical, Trash } from "lucide-react"
+import {
+  AlertCircle,
+  CheckCircle,
+  FileType2,
+  Folder,
+  MoreVertical,
+  RefreshCw,
+  Trash,
+} from "lucide-react"
 import { formatFileSize } from "@/lib/utils"
-import { format } from "date-fns"
 import { useState, useTransition } from "react"
 import { Checkbox } from "@/components/ui/checkbox"
 import bulkDelete, { S3Response, deleteFolder, deleteObject } from "../_actions"
@@ -34,7 +41,7 @@ import { usePathname } from "next/navigation"
 import { useUser } from "@clerk/nextjs"
 
 /**
- * Using tanstack/table
+ * Using tanstack/table package for UI of showing files and folder.
  * @see {@link https://tanstack.com/table}
  */
 
@@ -78,12 +85,32 @@ export const columns: ColumnDef<S3Response>[] = [
     },
   },
   {
-    accessorKey: "LastModified",
-    header: "Last Modified",
+    id: "status",
+    header: "Status",
     cell: ({ row }) => {
-      const date: Date = row.getValue("LastModified")
-      const showDate = format(date, "PPPp")
-      return <div className="text-neutral-400 font-bold">{showDate}</div>
+      const statusProps = row.original.StatusProps
+      console.log(statusProps)
+      if (statusProps) {
+        const { status, code } = statusProps
+
+        return (
+          <div className="text-neutral-400 font-bold">
+            {status === "success" && (
+              <CheckCircle className="h-6 w-6 text-green-600" />
+            )}
+            {status === "processing" && (
+              <RefreshCw className="h-6 w-6 text-blue-600 animate-spin" />
+            )}
+            {status === "error" && (
+              <>
+                <AlertCircle className="h-6 w-6 text-red-600" />
+                <Button variant={"destructive"}>Retry</Button>
+              </>
+            )}
+          </div>
+        )
+      }
+      return <div className="text-neutral-400 font-bold">&mdash;</div>
     },
   },
   {
@@ -123,7 +150,14 @@ export default function FilesDataTable({ data }: { data: S3Response[] }) {
           onClick={() =>
             startTransition(async () => {
               await bulkDelete(
-                [...selectedRows.map((row) => row.original)],
+                [
+                  ...selectedRows.map((row) => {
+                    return {
+                      OriginalKey: row.original.OriginalKey,
+                      StorageClass: row.original.StorageClass,
+                    }
+                  }),
+                ],
                 pathname
               )
             })

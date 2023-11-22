@@ -13,6 +13,7 @@ const BUCKET_NAME = "lovagent-files"
 export type S3Response = Omit<_Object, "StorageClass"> & {
   StorageClass?: string
   OriginalKey?: string
+  StatusProps?: Record<string, string>
 }
 
 export async function getFoldersAndFiles(prefix: string) {
@@ -26,25 +27,30 @@ export async function getFoldersAndFiles(prefix: string) {
   let allObjects: S3Response[] = []
   if (files.Contents) {
     allObjects = [
-      ...allObjects,
       ...files.Contents.filter(content => {
         if (content.Key?.endsWith("/") && content.Key === `${prefix}/${extractRightOfSlash(content.Key!.slice(0, -1))}/`) return true
         else if (!content.Key?.endsWith("/") && content.Key === `${prefix}/${extractRightOfSlash(content.Key!)}`) return true
         else return false
-      }).map(content => {
-        if (content.Key?.endsWith("/")) return {
-          ...content,
-          Key: extractRightOfSlash(content.Key!.slice(0, -1)),
-          StorageClass: "DIRECTORY",
-          OriginalKey: content.Key
-        }
-        else return {
-          ...content,
-          Key: extractRightOfSlash(content.Key!),
-          OriginalKey: content.Key
-        }
       })
     ];
+    allObjects = await Promise.all(allObjects.map(async (content) => {
+      if (content.Key?.endsWith("/")) return {
+        ...content,
+        Key: extractRightOfSlash(content.Key!.slice(0, -1)),
+        StorageClass: "DIRECTORY",
+        OriginalKey: content.Key
+      }
+      else {
+        const statusReq = await fetch(`http://localhost:8000/file_status?s3_key=${content.Key}`)
+        const statusProps: Record<string, string> = await statusReq.json()
+        return {
+          ...content,
+          Key: extractRightOfSlash(content.Key!),
+          OriginalKey: content.Key,
+          StatusProps: statusProps
+        }
+      }
+    }))
   }
   return allObjects.sort((a, b) => {
     if (a.StorageClass === 'DIRECTORY' && b.StorageClass !== 'DIRECTORY') {
@@ -74,10 +80,6 @@ export async function deleteObject(key: string, path?: string, revalidate = true
   if (response.ok) {
     const data = await response.json()
     if (data.status === "success") {
-      await client.send(new DeleteObjectCommand({
-        Bucket: BUCKET_NAME,
-        Key: key
-      }))
       if (revalidate && path) revalidatePath("/internal")
     } else {
       console.error(data.message)
@@ -101,14 +103,8 @@ export async function deleteFolder(key: string, path?: string, revalidate = true
     Bucket: BUCKET_NAME,
     Prefix: key
   }))
-  const subFolders = await client.send(new ListObjectsV2Command({
-    Bucket: BUCKET_NAME,
-    Prefix: key,
-    Delimiter: "/"
-  }))
   const objectKeys = [
     ...files.Contents?.map(obj => obj.Key) ?? [],
-    ...subFolders.CommonPrefixes?.map(prefix => prefix.Prefix) ?? []
   ];
   await Promise.all(
     objectKeys.map(async (key) => {
@@ -119,26 +115,13 @@ export async function deleteFolder(key: string, path?: string, revalidate = true
       if (res.Metadata?.["meili-doc-id"]) {
         const formData = new FormData()
         formData.set("key", key!)
-        const response = await fetch(
+        await fetch(
           `http://localhost:8000/delete_doc/${res.Metadata["meili-doc-id"]}`,
           {
             method: "POST",
             body: formData
           }
         )
-        if (response.ok) {
-          const data = await response.json()
-          if (data.status === "success") {
-            await client.send(new DeleteObjectCommand({
-              Bucket: BUCKET_NAME,
-              Key: key
-            }))
-          } else {
-            console.error(data.message)
-          }
-        } else {
-          console.error("Error:", await response.text())
-        }
       } else {
         client.send(new DeleteObjectCommand({
           Bucket: BUCKET_NAME,
@@ -150,7 +133,7 @@ export async function deleteFolder(key: string, path?: string, revalidate = true
   if (revalidate && path) revalidatePath(path)
 }
 
-export default async function bulkDelete(objects: S3Response[], path: string) {
+export default async function bulkDelete(objects: Pick<S3Response, "OriginalKey" | "StorageClass">[], path: string) {
   await Promise.all(
     objects.map(object => {
       if (object.StorageClass === "DIRECTORY") deleteFolder(object.OriginalKey!, "", false)

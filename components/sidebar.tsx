@@ -1,20 +1,19 @@
-"use client";
+"use client"
 
-import Link from "next/link";
-import Image from "next/image";
-import { Montserrat } from "next/font/google";
+import Link from "next/link"
+import Image from "next/image"
+import { Montserrat } from "next/font/google"
 import {
   LayoutDashboard,
   Search,
   FileStack,
   Settings,
   FolderClosed,
-} from "lucide-react";
-import { usePathname } from "next/navigation";
-import { cn } from "@/lib/utils";
-import { FreeCounter } from "@/components/free-counter";
+} from "lucide-react"
+import { usePathname } from "next/navigation"
+import { cn } from "@/lib/utils"
 
-const poppins = Montserrat({ weight: "600", subsets: ["latin"] });
+const poppins = Montserrat({ weight: "600", subsets: ["latin"] })
 
 const routes = [
   {
@@ -51,16 +50,10 @@ const routes = [
     href: "/settings",
     activeMethod: "route",
   },
-];
+]
 
-export const Sidebar = ({
-  apiLimitCount = 0,
-  isPro = false,
-}: {
-  apiLimitCount: number;
-  isPro: boolean;
-}) => {
-  const pathname = usePathname();
+export const Sidebar = () => {
+  const pathname = usePathname()
 
   return (
     <div className="space-y-4 py-4 flex flex-col h-full bg-[#111827] text-white">
@@ -97,7 +90,6 @@ export const Sidebar = ({
           ))}
         </div>
       </div>
-      <FreeCounter apiLimitCount={apiLimitCount} isPro={isPro} />
     </div>
-  );
-};
+  )
+}

@@ -29,8 +29,6 @@ To run this project, you will need to add the following environment variables to
 
 `AWS_SECRET_ACCESS_KEY=`
 
-`DATABASE_URL=`
-
 `NEXT_PUBLIC_APP_URL=`
 
 Check out .env.example file too.

@@ -5,8 +5,6 @@ import { redirect } from "next/navigation"
 import { Heading } from "@/components/heading"
 import { FileStack } from "lucide-react"
 
-export const runtime = "edge"
-
 export default async function InternalPage() {
   const user = await currentUser()
   if (!user?.emailAddresses) return redirect("/")
