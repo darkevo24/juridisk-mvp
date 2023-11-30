@@ -25,6 +25,31 @@ module.exports = {
                 lineHeight: "1.5",
               },
             },
+            ul: {
+              "&.accordion": {
+                listStyle: "none",
+                paddingLeft: "0",
+              },
+              "&.accordion .accordion-navigation > a": {
+                display: "table",
+                marginLeft: "auto",
+                textUnderlineOffset: "6px",
+              },
+              "&.accordion div.content": {
+                background: "#ebf4fa",
+                height: "0",
+                overflow: "hidden",
+                padding: "0 20px",
+              },
+              "&.accordion div.content h2": {
+                fontSize: "24px",
+                margin: "16px 0",
+              },
+              "&.accordion div.content h3": {
+                fontSize: "20px",
+                margin: "12px 0",
+              },
+            },
           },
         },
       },
@@ -79,10 +104,15 @@ module.exports = {
         },
       },
       animation: {
-        "accordion-down": "accordion-down 0.2s ease-out",
-        "accordion-up": "accordion-up 0.2s ease-out",
+        "accordion-down": "accordion-down 0.2s ease-out forwards",
+        "accordion-up": "accordion-up 0.2s ease-out forwards",
       },
     },
   },
+  safelist: [
+    "group",
+    "group-data-[state=closed]:animate-accordion-up",
+    "group-data-[state=open]:animate-accordion-down",
+  ],
   plugins: [require("tailwindcss-animate"), require("@tailwindcss/typography")],
 }
