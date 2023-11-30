@@ -1,6 +1,6 @@
 "use client"
 import { refreshPage } from "@/lib/util-actions"
-import { useUser } from "@clerk/nextjs"
+import { useSession } from "next-auth/react"
 import { Upload } from "lucide-react"
 import { usePathname } from "next/navigation"
 import { useRef, useTransition } from "react"
@@ -9,7 +9,7 @@ const UploadButton = () => {
   const inputRef = useRef<HTMLInputElement>(null)
   const pathname = usePathname()
   const [isPending, startTransition] = useTransition()
-  const { user } = useUser()
+  const { data: session } = useSession()
 
   return (
     <>
@@ -43,13 +43,10 @@ const UploadButton = () => {
               formData.append("files", file)
             }
             // formData.set("file", e.target.files[0])
-            formData.set("email", user?.emailAddresses[0].emailAddress ?? "")
+            formData.set("email", session?.user?.email ?? "")
             formData.set(
               "file_path",
-              pathname.replace(
-                "/files",
-                user?.emailAddresses[0].emailAddress ?? ""
-              )
+              pathname.replace("/files", session?.user?.email ?? "")
             )
             startTransition(async () => {
               const res = await fetch("/api/uploadpdf", {

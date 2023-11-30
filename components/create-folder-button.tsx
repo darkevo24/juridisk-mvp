@@ -13,18 +13,15 @@ import { Button } from "@/components/ui/button"
 import { FolderPlus } from "lucide-react"
 import { createFolder } from "@/app/(dashboard)/(routes)/files/_actions"
 import { usePathname } from "next/navigation"
-import { useUser } from "@clerk/nextjs"
+import { useSession } from "next-auth/react"
 
 export default function CreateFolderButton() {
   const pathname = usePathname()
-  const { user } = useUser()
+  const { data: session } = useSession()
 
   async function getAction(formData: FormData) {
     const folderName = formData.get("foldername") as string
-    const basePath = pathname.replace(
-      "/files",
-      user?.emailAddresses[0].emailAddress ?? ""
-    )
+    const basePath = pathname.replace("/files", session?.user?.email ?? "")
     await createFolder(basePath + "/" + folderName, pathname)
   }
 

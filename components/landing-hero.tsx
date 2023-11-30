@@ -1,12 +1,10 @@
-"use client";
+import { auth } from "@/auth"
+import SignInButton from "./signin-button"
+import { Button } from "./ui/button"
+import Link from "next/link"
 
-import Link from "next/link";
-import { useAuth } from "@clerk/nextjs";
-
-import { Button } from "@/components/ui/button";
-
-export const LandingHero = () => {
-  const { isSignedIn } = useAuth();
+export const LandingHero = async () => {
+  const session = await auth()
 
   return (
     <div className="flex flex-col justify-center items-center space-y-8 md:space-y-0 pt-36 pb-16">
@@ -20,19 +18,28 @@ export const LandingHero = () => {
           </div>
         </div>
         <div className="text-sm md:text-xl font-light text-zinc-400">
-          AI-drevet juridisk assistanse med forståelse for dine behov. Finn de mest relevante rettskildene raskt og enkelt.
+          AI-drevet juridisk assistanse med forståelse for dine behov. Finn de
+          mest relevante rettskildene raskt og enkelt.
         </div>
         <div>
-          <Link href={isSignedIn ? "/dashboard" : "/sign-up"}>
+          {session ? (
             <Button
+              asChild
+              variant="premium"
+              className="md:text-lg p-4 md:p-6 rounded-full font-semibold"
+            >
+              <Link href="/dashboard">Prøv det nå!</Link>
+            </Button>
+          ) : (
+            <SignInButton
               variant="premium"
               className="md:text-lg p-4 md:p-6 rounded-full font-semibold"
             >
               Prøv det nå!
-            </Button>
-          </Link>
+            </SignInButton>
+          )}
         </div>
       </div>
     </div>
-  );
-};
+  )
+}

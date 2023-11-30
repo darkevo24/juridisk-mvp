@@ -1,5 +1,3 @@
-"use client";
-
 export const LandingFooter = () => {
   return (
     <footer className="text-white text-center py-10 mt-20 bg-[#111827]">
@@ -9,5 +7,5 @@ export const LandingFooter = () => {
         </div>
       </div>
     </footer>
-  );
-};
+  )
+}

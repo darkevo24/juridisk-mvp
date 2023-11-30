@@ -1,16 +1,22 @@
+import { auth } from "@/auth"
 import Navbar from "@/components/navbar"
 import { Sidebar } from "@/components/sidebar"
+import AuthSessionProvider from "@/lib/session-provider"
+import { redirect } from "next/navigation"
+
 const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
+  const session = await auth()
+  if (!session) redirect("/")
   return (
-    <div className="h-full relative">
-      <div className="hidden h-full md:flex md:w-72 md:flex-col md:fixed md:inset-y-0 z-80 bg-gray-900">
+    <AuthSessionProvider>
+      <div className="relative flex">
         <Sidebar />
+        <main className="h-full flex flex-col px-24 w-full">
+          <Navbar />
+          {children}
+        </main>
       </div>
-      <main className="md:pl-72 h-full flex flex-col">
-        <Navbar />
-        {children}
-      </main>
-    </div>
+    </AuthSessionProvider>
   )
 }
 

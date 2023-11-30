@@ -1,5 +1,5 @@
 import { getFoldersAndFiles } from "../_actions"
-import { currentUser } from "@clerk/nextjs"
+import { auth } from "@/auth"
 import { redirect } from "next/navigation"
 import FilesDataTable from "../_client_table"
 import { Button } from "@/components/ui/button"
@@ -12,11 +12,9 @@ export default async function FileManagementPage({
 }: {
   params: { prefix: string[] }
 }) {
-  const user = await currentUser()
-  if (!user?.emailAddresses) return redirect("/")
-  const finalPrefix = `${
-    user.emailAddresses[0].emailAddress
-  }/${params.prefix.join("/")}`
+  const session = await auth()
+  if (!session?.user) return redirect("/")
+  const finalPrefix = `${session.user.email}/${params.prefix.join("/")}`
   const data = await getFoldersAndFiles(finalPrefix)
   return (
     <>

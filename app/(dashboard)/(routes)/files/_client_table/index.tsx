@@ -38,7 +38,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { usePathname } from "next/navigation"
-import { useUser } from "@clerk/nextjs"
+import { useSession } from "next-auth/react"
 
 /**
  * Using tanstack/table package for UI of showing files and folder.
@@ -94,18 +94,20 @@ export const columns: ColumnDef<S3Response>[] = [
         const { status, code } = statusProps
 
         return (
-          <div className="text-neutral-400 font-bold">
+          <div>
             {status === "success" && (
               <CheckCircle className="h-6 w-6 text-green-600" />
             )}
             {status === "processing" && (
-              <RefreshCw className="h-6 w-6 text-blue-600 animate-spin" />
+              <RefreshCw className="h-6 w-6 text-blue-600" />
             )}
             {status === "error" && (
-              <>
+              <div className="flex gap-2 items-center">
                 <AlertCircle className="h-6 w-6 text-red-600" />
-                <Button variant={"destructive"}>Retry</Button>
-              </>
+                <Button size={"sm"} variant={"ghost"}>
+                  Retry
+                </Button>
+              </div>
             )}
           </div>
         )
@@ -233,7 +235,7 @@ export default function FilesDataTable({ data }: { data: S3Response[] }) {
 }
 
 function NameCell({ row }: { row: Row<S3Response> }) {
-  const { user } = useUser()
+  const { data: session } = useSession()
   const type: string = row.getValue("StorageClass")
   const title: string = row.getValue("Key")
   const { OriginalKey } = row.original
@@ -253,10 +255,7 @@ function NameCell({ row }: { row: Row<S3Response> }) {
           variant={"link"}
         >
           <Link
-            href={OriginalKey!.replace(
-              user?.emailAddresses[0].emailAddress ?? "",
-              "/files"
-            )}
+            href={OriginalKey!.replace(session?.user?.email ?? "", "/files")}
           >
             {title}
           </Link>

@@ -17,10 +17,6 @@ it will just take about a minute.
 
 To run this project, you will need to add the following environment variables to your .env.local file
 
-`NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=`
-
-`CLERK_SECRET_KEY=`
-
 `NEXT_PUBLIC_MEILISEARCH_URL=`
 
 `NEXT_PUBLIC_MEILISEARCH_API_KEY=`
