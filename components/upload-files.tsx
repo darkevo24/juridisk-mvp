@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import { Upload } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useTransition } from "react";
+import { fetchEventSource } from "@microsoft/fetch-event-source";
 
 const UploadButton = () => {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -14,20 +15,10 @@ const UploadButton = () => {
   const router = useRouter();
 
   useEffect(() => {
-    let sse: EventSource;
     if (onChange) {
-      sse = new EventSource("http://localhost:8000/api/convert_document/sse");
-
-      function handleStream(e: MessageEvent<any>) {
-        router.refresh();
-      }
-
-      sse.onmessage = (e) => handleStream(e);
-      sse.onerror = (e) => sse.close();
+      router.refresh();
+      setOnChange(false);
     }
-    return () => {
-      sse?.close();
-    };
   }, [onChange]);
 
   return (
@@ -62,19 +53,49 @@ const UploadButton = () => {
             for (const file of e.target.files) {
               formData.append("files", file);
             }
-            // formData.set("file", e.target.files[0])
             formData.set("email", session?.user?.email ?? "");
             formData.set(
               "file_path",
               pathname.replace("/files", session?.user?.email ?? "")
             );
             startTransition(async () => {
-              const res = await fetch("/api/uploadpdf", {
-                method: "POST",
-                body: formData,
-              });
-              const resp = await res.json();
-              if (resp.status === "success") await refreshPage(pathname);
+              const ctrl = new AbortController();
+              try {
+                await fetchEventSource(
+                  "http://localhost:8000/api/convert_document",
+                  {
+                    method: "POST",
+                    signal: ctrl.signal,
+                    openWhenHidden: true,
+                    body: formData,
+                    onopen: async (res) => {
+                      const contentType = res.headers.get("content-type");
+                      if (
+                        !!contentType &&
+                        contentType.indexOf("application/json") >= 0
+                      ) {
+                        throw await res.json();
+                      }
+                      router.refresh();
+                    },
+                    onerror: (e) => {
+                      if (!!e) {
+                        console.log(e);
+                      }
+                      throw e;
+                    },
+                    onmessage: async (e) => {
+                      const data = e.data;
+                      if (!data) {
+                        return;
+                      }
+                      setOnChange(true);
+                    },
+                  }
+                );
+              } catch (error) {
+                console.log(error);
+              }
             });
           }
         }}

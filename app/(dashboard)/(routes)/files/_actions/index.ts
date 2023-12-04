@@ -175,10 +175,10 @@ export default async function bulkDelete(
   path: string
 ) {
   await Promise.all(
-    objects.map((object) => {
+    objects.map(async (object) => {
       if (object.StorageClass === "DIRECTORY")
-        deleteFolder(object.OriginalKey!, "", false);
-      else deleteObject(object.OriginalKey!, "", false);
+        await deleteFolder(object.OriginalKey!, "", false);
+      else await deleteObject(object.OriginalKey!, "", false);
     })
   );
   revalidatePath(path);
