@@ -1,8 +1,21 @@
+import { ChevronRight } from "lucide-react"
+import Link from "next/link"
+
 export default function page() {
   return (
-    <div
-      dangerouslySetInnerHTML={{
-        __html: `<section class="section-big"><tekst xmlns="https://lovdata.no/regelverk"></tekst><h2>Veiledning om tekniske krav til byggverk</h2><p>Forskrift om tekniske krav til byggverk trekker opp grensen for det minimum av egenskaper et byggverk må ha for å kunne oppføres lovlig i Norge.</p>
+    <div>
+      <div className="w-full flex justify-between">
+        <Link
+          href={"tek17/1/1-1"}
+          className="flex ml-auto items-center px-3 py-1 border border-blue-800 text-blue-800 font-medium cursor-pointer hover:bg-blue-800 hover:text-primary-foreground transition"
+        >
+          Neste
+          <ChevronRight className="ml-1" />
+        </Link>
+      </div>
+      <div
+        dangerouslySetInnerHTML={{
+          __html: `<h2>Veiledning om tekniske krav til byggverk</h2><p>Forskrift om tekniske krav til byggverk trekker opp grensen for det minimum av egenskaper et byggverk må ha for å kunne oppføres lovlig i Norge.</p>
       <p>Denne veiledningen forklarer forskriftens krav og gir preaksepterte ytelser som vil oppfylle kravene.</p>
       <p>Forskriften gir funksjonskrav, men i mange tilfeller er funksjonskravene også fortolket og gitt som ytelseskrav i forskriften. Dette gjelder for eksempel krav knyttet til tilgjengelig boenhet. Andre funksjonskrav er fortolket og gitt som preaksepterte ytelser i denne veiledningen. Dette gjelder for eksempel i stor grad for sikkerhet ved brann.</p>
       <p>Informasjon utgitt av Direktoratet for byggkvalitet kan fritt brukes og gjengis. Ved gjengivelse av tekst eller figurer, skal Direktoratet for byggkvalitet oppgis som kilde.</p>
@@ -25,9 +38,10 @@ export default function page() {
       <li><a class="link-out" href="https://www.byggforsk.no/byggeregler" title="byggforsk.no: Anvisninger i Byggforskserien fra SINTEF Byggforsk">Anvisninger i Byggforskserien (SINTEF) </a></li>
       </ul>
       </div>
-      </div></p></section>`,
-      }}
-      className="prose group:max-w-[75ch] prose-lg prose-neutral prose-ul:font-medium prose-p:text-neutral-800 prose-p:font-medium"
-    ></div>
+      </div></p>`,
+        }}
+        className="prose group:max-w-[75ch] prose-lg prose-neutral prose-ul:font-medium prose-p:text-neutral-800 prose-p:font-medium py-6 max-w-none"
+      ></div>
+    </div>
   )
 }

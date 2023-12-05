@@ -9,13 +9,18 @@ import {
   FileStack,
   Settings,
   FolderClosed,
-  PanelLeftClose,
-  PanelRightClose,
+  ScanText,
 } from "lucide-react"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { useState } from "react"
 import { Button } from "./ui/button"
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"
 
 const poppins = Montserrat({ weight: "600", subsets: ["latin"] })
 
@@ -26,6 +31,7 @@ const routes = [
     href: "/dashboard",
     color: "text-sky-500",
     activeMethod: "route",
+    type: "link",
   },
   {
     label: "Rettskildesøk",
@@ -33,13 +39,20 @@ const routes = [
     href: "/search",
     color: "text-red-500",
     activeMethod: "route",
+    type: "link",
   },
   {
-    label: "TEK17",
-    icon: Search,
-    href: "/tek17",
+    label: "Plan- og Bygning",
+    icon: ScanText,
     color: "text-lime-500",
-    activeMethod: "route",
+    type: "menu",
+    items: [
+      {
+        label: "TEK17",
+        href: "/tek17",
+        activeMethod: "pathname",
+      },
+    ],
   },
   {
     label: "Interntsøk",
@@ -47,6 +60,7 @@ const routes = [
     href: "/internal",
     color: "text-yellow-300",
     activeMethod: "route",
+    type: "link",
   },
   {
     label: "Filbehandling",
@@ -54,84 +68,100 @@ const routes = [
     href: "/files",
     color: "text-fuchsia-500",
     activeMethod: "pathname",
+    type: "link",
   },
   {
     label: "Innstillinger",
     icon: Settings,
     href: "/settings",
     activeMethod: "route",
+    type: "link",
   },
 ]
 
 export const Sidebar = () => {
-  const [uiMode, setUIMode] = useState<"standard" | "compact">("standard")
   const pathname = usePathname()
 
   return (
     <div className="hidden md:flex md:flex-col md:inset-y-0 z-80 bg-gray-900">
-      <div className="space-y-4 sticky top-0 min-h-screen py-4 flex flex-col bg-[#111827] text-white">
+      <div className="space-y-4 sticky min-w-[20rem] top-0 min-h-screen py-4 flex flex-col bg-[#111827] text-white">
         <div className="px-3 py-2">
-          {uiMode === "standard" ? (
-            <div className="flex items-center justify-between gap-10 mb-14">
-              <Link href="/dashboard" className="flex items-center pl-3">
-                <div className="relative h-8 w-8 mr-4">
-                  <Image fill alt="Logo" src="/logo.png" />
-                </div>
-                <h1
-                  className={cn(
-                    "text-xl font-bold whitespace-nowrap",
-                    poppins.className
-                  )}
-                >
-                  LovAgent AI
-                </h1>
-              </Link>
-              <Button
-                onClick={() => setUIMode("compact")}
-                aria-label="Left Close"
-                variant={"ghost"}
-                size={"icon"}
-              >
-                <PanelLeftClose />
-              </Button>
-            </div>
-          ) : (
-            <Button
-              onClick={() => setUIMode("standard")}
-              aria-label="Right Open"
-              variant={"ghost"}
-              size={"icon"}
-              className="mb-14"
-            >
-              <PanelRightClose />
-            </Button>
-          )}
-          <div className="space-y-1">
-            {routes.map((route) => (
-              <Link
-                key={route.href}
-                href={route.href}
+          <div className="flex items-center justify-between gap-10 mb-14">
+            <Link href="/dashboard" className="flex items-center pl-3">
+              <div className="relative h-8 w-8 mr-4">
+                <Image fill alt="Logo" src="/logo.png" />
+              </div>
+              <h1
                 className={cn(
-                  "text-sm group flex p-3 w-full justify-start font-medium cursor-pointer hover:text-white hover:bg-white/10 rounded-lg transition",
-                  route.activeMethod === "route"
-                    ? route.href.startsWith(pathname)
-                      ? "text-white bg-white/10"
-                      : "text-zinc-400"
-                    : pathname.startsWith(route.href)
-                    ? "text-white bg-white/10"
-                    : "text-zinc-400"
+                  "text-xl font-bold whitespace-nowrap",
+                  poppins.className
                 )}
               >
-                <div className="flex items-center flex-1">
-                  <route.icon
+                LovAgent AI
+              </h1>
+            </Link>
+          </div>
+          <div className="space-y-1">
+            {routes.map((route) => (
+              <>
+                {route.type === "link" ? (
+                  <Link
+                    key={route.href}
+                    href={route.href!}
                     className={cn(
-                      `h-5 w-5 ${uiMode === "standard" ? "mr-3" : ""}`,
-                      route.color
+                      "text-sm group flex p-3 w-full justify-start font-medium cursor-pointer hover:text-white hover:bg-white/10 rounded-lg transition",
+                      route.activeMethod === "route"
+                        ? route.href.startsWith(pathname)
+                          ? "text-white bg-white/10"
+                          : "text-zinc-400"
+                        : pathname.startsWith(route.href!)
+                        ? "text-white bg-white/10"
+                        : "text-zinc-400"
                     )}
-                  />
-                  {uiMode === "standard" && route.label}
-                </div>
-              </Link>
+                  >
+                    <div className="flex items-center flex-1">
+                      <route.icon className={cn(`h-5 w-5 mr-3`, route.color)} />
+                      {route.label}
+                    </div>
+                  </Link>
+                ) : (
+                  <Accordion type="single" collapsible>
+                    <AccordionItem
+                      className="px-3 border-b-0 text-zinc-400"
+                      value="item-1"
+                    >
+                      <AccordionTrigger>
+                        <div className="flex items-center">
+                          <route.icon
+                            className={cn(`h-5 w-5 mr-3`, route.color)}
+                          />
+                          {route.label}
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent>
+                        {route?.items?.map((link) => (
+                          <Link
+                            className={cn(
+                              "ml-6 text-sm group flex p-3 justify-start font-medium cursor-pointer hover:text-white hover:bg-white/10 rounded-lg transition",
+                              link.activeMethod === "route"
+                                ? link.href.startsWith(pathname)
+                                  ? "text-white bg-white/10"
+                                  : "text-zinc-400"
+                                : pathname.startsWith(link.href)
+                                ? "text-white bg-white/10"
+                                : "text-zinc-400"
+                            )}
+                            key={link.href}
+                            href={link.href}
+                          >
+                            {link.label}
+                          </Link>
+                        ))}
+                      </AccordionContent>
+                    </AccordionItem>
+                  </Accordion>
+                )}
+              </>
             ))}
           </div>
         </div>

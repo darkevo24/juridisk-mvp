@@ -21,7 +21,7 @@ interface HitType {
 
 const searchClient = instantMeiliSearch(
   "http://localhost:7700",
-  "KfL0tPu0lkYgFXs8mphBZWu6_-n9dyAJ7nyKKgo5FYU"
+  "Y9DQzG8adf9Nw3K85QCT2BtbVKIsih6LbN_lL3tNtrc"
 )
 
 const InternalClient = ({ userEmail }: { userEmail: string }) => {

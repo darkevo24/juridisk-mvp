@@ -1,0 +1,28 @@
+.accordion .accordion-navigation > a {
+  display: table;
+  margin-left: auto;
+  text-underline-offset: 6px;
+  position: relative;
+  padding-right: 25px;
+}
+.accordion .accordion-navigation > a::after {
+  content: "";
+  background: url(/arrow-dark-black.svg) center right no-repeat;
+  background-size: 8px;
+  display: block;
+  height: 12px;
+  width: 12px;
+  top: 50%;
+  position: absolute;
+  right: 6px;
+  transform: translateY(-50%) rotate(90deg);
+  transition: all 0.2s;
+}
+
+.accordion .accordion-navigation[data-state="open"] > a::after {
+  transform: translateY(-50%) rotate(-90deg);
+}
+
+.accordion .accordion-navigation table p {
+  margin: 0.5rem 0;
+}

@@ -30,11 +30,6 @@ module.exports = {
                 listStyle: "none",
                 paddingLeft: "0",
               },
-              "&.accordion .accordion-navigation > a": {
-                display: "table",
-                marginLeft: "auto",
-                textUnderlineOffset: "6px",
-              },
               "&.accordion div.content": {
                 background: "#ebf4fa",
                 height: "0",
