@@ -1,5 +1,5 @@
-"use client"
-import { useState } from "react"
+"use client";
+import { useState } from "react";
 import {
   SearchBox,
   Highlight,
@@ -7,22 +7,22 @@ import {
   Pagination,
   useHits,
   useInstantSearch,
-} from "react-instantsearch"
-import { InstantSearchNext } from "react-instantsearch-nextjs"
-import { instantMeiliSearch } from "@meilisearch/instant-meilisearch"
-import { Button } from "@/components/ui/button"
-import { Search, X } from "lucide-react"
-import Link from "next/link"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+} from "react-instantsearch";
+import { InstantSearchNext } from "react-instantsearch-nextjs";
+import { instantMeiliSearch } from "@meilisearch/instant-meilisearch";
+import { Button } from "@/components/ui/button";
+import { Search, X } from "lucide-react";
+import Link from "next/link";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface HitType {
-  [key: string]: any
+  [key: string]: any;
 }
 
 const searchClient = instantMeiliSearch(
   "http://localhost:7700",
-  "Y9DQzG8adf9Nw3K85QCT2BtbVKIsih6LbN_lL3tNtrc"
-)
+  "KfL0tPu0lkYgFXs8mphBZWu6_-n9dyAJ7nyKKgo5FYU"
+);
 
 const InternalClient = ({ userEmail }: { userEmail: string }) => {
   return (
@@ -48,19 +48,19 @@ const InternalClient = ({ userEmail }: { userEmail: string }) => {
         )}
       </div>
     </div>
-  )
-}
+  );
+};
 
 function Hits() {
-  const [openTabs, setOpenTabs] = useState<HitType[]>([])
-  const [openTabId, setOpenTabId] = useState<null | string>(null)
-  const { hits } = useHits()
-  const { status } = useInstantSearch()
+  const [openTabs, setOpenTabs] = useState<HitType[]>([]);
+  const [openTabId, setOpenTabId] = useState<null | string>(null);
+  const { hits } = useHits();
+  const { status } = useInstantSearch();
   hits.sort(function (a, b) {
-    const t1 = a.timestamp as number
-    const t2 = b.timestamp as number
-    return t2 - t1
-  })
+    const t1 = a.timestamp as number;
+    const t2 = b.timestamp as number;
+    return t2 - t1;
+  });
   return (
     <>
       {hits.length !== 0 ? (
@@ -94,12 +94,12 @@ function Hits() {
                   </span>
                   <X
                     onClick={(e) => {
-                      e.stopPropagation()
+                      e.stopPropagation();
                       const remainingTabs = openTabs.filter(
                         (tab) => tab.id !== hit.id
-                      )
-                      setOpenTabs(remainingTabs)
-                      if (hit.id === openTabId) setOpenTabId("search")
+                      );
+                      setOpenTabs(remainingTabs);
+                      if (hit.id === openTabId) setOpenTabId("search");
                     }}
                     className="h-5 w-5 ml-4"
                   />
@@ -119,9 +119,9 @@ function Hits() {
                         key={index}
                         onClick={() => {
                           if (!openTabs.map((tab) => tab.id).includes(hit.id)) {
-                            setOpenTabs((prev) => [...prev, hit])
+                            setOpenTabs((prev) => [...prev, hit]);
                           }
-                          setOpenTabId(hit.id)
+                          setOpenTabId(hit.id);
                         }}
                         className="p-8 text-left w-full flex flex-col gap-y-2 rounded-lg bg-neutral-100 hover:shadow-md hover:scale-[1.01] active:scale-[0.99] transition space-y-2"
                       >
@@ -179,7 +179,7 @@ function Hits() {
         </p>
       )}
     </>
-  )
+  );
 }
 
-export default InternalClient
+export default InternalClient;

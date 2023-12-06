@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import {
   ColumnDef,
@@ -6,7 +6,7 @@ import {
   flexRender,
   getCoreRowModel,
   useReactTable,
-} from "@tanstack/react-table"
+} from "@tanstack/react-table";
 import {
   Table,
   TableBody,
@@ -14,7 +14,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
+} from "@/components/ui/table";
 import {
   AlertCircle,
   CheckCircle,
@@ -23,22 +23,27 @@ import {
   MoreVertical,
   RefreshCw,
   Trash,
-} from "lucide-react"
-import { formatFileSize } from "@/lib/utils"
-import { useState, useTransition } from "react"
-import { Checkbox } from "@/components/ui/checkbox"
-import bulkDelete, { S3Response, deleteFolder, deleteObject } from "../_actions"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
+} from "lucide-react";
+import { formatFileSize } from "@/lib/utils";
+import { useEffect, useState, useTransition } from "react";
+import { Checkbox } from "@/components/ui/checkbox";
+import bulkDelete, {
+  S3Response,
+  deleteFolder,
+  deleteObject,
+} from "../_actions";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { usePathname } from "next/navigation"
-import { useSession } from "next-auth/react"
+} from "@/components/ui/dropdown-menu";
+import { usePathname } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 /**
  * Using tanstack/table package for UI of showing files and folder.
@@ -74,31 +79,29 @@ export const columns: ColumnDef<S3Response>[] = [
     accessorKey: "Size",
     header: "Size",
     cell: ({ row }) => {
-      const size: number = row.getValue("Size")
-      const type: string = row.getValue("StorageClass")
-      const showSize = formatFileSize(size)
+      const size: number = row.getValue("Size");
+      const type: string = row.getValue("StorageClass");
+      const showSize = formatFileSize(size);
       return (
         <div className="text-neutral-400 font-bold">
           {type === "DIRECTORY" ? <>&mdash;</> : showSize}
         </div>
-      )
+      );
     },
   },
   {
     id: "status",
     header: "Status",
     cell: ({ row }) => {
-      const statusProps = row.original.StatusProps
-      console.log(statusProps)
+      const statusProps = row.original.StatusProps;
+      const status = statusProps?.status;
       if (statusProps) {
-        const { status, code } = statusProps
-
         return (
           <div>
             {status === "success" && (
               <CheckCircle className="h-6 w-6 text-green-600" />
             )}
-            {status === "processing" && (
+            {status === "in_progress" && (
               <RefreshCw className="h-6 w-6 text-blue-600" />
             )}
             {status === "error" && (
@@ -110,28 +113,29 @@ export const columns: ColumnDef<S3Response>[] = [
               </div>
             )}
           </div>
-        )
+        );
       }
-      return <div className="text-neutral-400 font-bold">&mdash;</div>
+      return <div className="text-neutral-400 font-bold">&mdash;</div>;
     },
   },
   {
     accessorKey: "StorageClass",
     header: "Content Type",
     cell: ({ row }) => {
-      const type: string = row.getValue("StorageClass")
-      const showText = type === "DIRECTORY" ? "FOLDER" : "FILE"
-      return <div className="text-neutral-400 font-bold">{showText}</div>
+      const type: string = row.getValue("StorageClass");
+      const showText = type === "DIRECTORY" ? "FOLDER" : "FILE";
+      return <div className="text-neutral-400 font-bold">{showText}</div>;
     },
   },
   {
     id: "actions",
     cell: ({ row }) => <ActionsCell row={row} />,
   },
-]
+];
 
 export default function FilesDataTable({ data }: { data: S3Response[] }) {
-  const [rowSelection, setRowSelection] = useState({})
+  const [rowSelection, setRowSelection] = useState({});
+  const router = useRouter();
   const table = useReactTable({
     data,
     columns,
@@ -140,10 +144,10 @@ export default function FilesDataTable({ data }: { data: S3Response[] }) {
     state: {
       rowSelection,
     },
-  })
-  const [isPending, startTransition] = useTransition()
-  const pathname = usePathname()
-  const selectedRows = table.getSelectedRowModel().rows
+  });
+  const [isPending, startTransition] = useTransition();
+  const pathname = usePathname();
+  const selectedRows = table.getSelectedRowModel().rows;
 
   return (
     <>
@@ -157,11 +161,11 @@ export default function FilesDataTable({ data }: { data: S3Response[] }) {
                     return {
                       OriginalKey: row.original.OriginalKey,
                       StorageClass: row.original.StorageClass,
-                    }
+                    };
                   }),
                 ],
                 pathname
-              )
+              );
             })
           }
           variant={isPending ? "outline" : "destructive"}
@@ -195,7 +199,7 @@ export default function FilesDataTable({ data }: { data: S3Response[] }) {
                             header.getContext()
                           )}
                     </TableHead>
-                  )
+                  );
                 })}
               </TableRow>
             ))}
@@ -231,14 +235,14 @@ export default function FilesDataTable({ data }: { data: S3Response[] }) {
         </Table>
       </div>
     </>
-  )
+  );
 }
 
 function NameCell({ row }: { row: Row<S3Response> }) {
-  const { data: session } = useSession()
-  const type: string = row.getValue("StorageClass")
-  const title: string = row.getValue("Key")
-  const { OriginalKey } = row.original
+  const { data: session } = useSession();
+  const type: string = row.getValue("StorageClass");
+  const title: string = row.getValue("Key");
+  const { OriginalKey } = row.original;
   return (
     <div className="flex gap-3 items-center">
       <div className="p-2 w-fit rounded-md bg-blue-500/10">
@@ -264,13 +268,13 @@ function NameCell({ row }: { row: Row<S3Response> }) {
         <span className="font-bold text-neutral-700">{title}</span>
       )}
     </div>
-  )
+  );
 }
 
 function ActionsCell({ row }: { row: Row<S3Response> }) {
-  const { OriginalKey, StorageClass } = row.original
-  const pathname = usePathname()
-  const [deletePending, startDeleteTransition] = useTransition()
+  const { OriginalKey, StorageClass } = row.original;
+  const pathname = usePathname();
+  const [deletePending, startDeleteTransition] = useTransition();
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -291,8 +295,8 @@ function ActionsCell({ row }: { row: Row<S3Response> }) {
           onClick={() =>
             startDeleteTransition(async () => {
               if (StorageClass === "DIRECTORY")
-                await deleteFolder(OriginalKey!, pathname)
-              else await deleteObject(OriginalKey!, pathname)
+                await deleteFolder(OriginalKey!, pathname);
+              else await deleteObject(OriginalKey!, pathname);
             })
           }
           className="text-red-700 hover:!text-red-700 hover:!bg-red-700/10"
@@ -301,5 +305,5 @@ function ActionsCell({ row }: { row: Row<S3Response> }) {
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
-  )
+  );
 }
